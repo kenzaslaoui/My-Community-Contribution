@@ -1,0 +1,260 @@
+---
+title: "Community contribution"
+author: "Kenza Slaoui"
+date: "2024-11-07"
+output: html_document
+---
+
+```{r, warning = FALSE, results = 'hide'}
+data(iris)
+library(tidyverse)
+library(gridExtra)
+```
+
+# Using different shapes, patterns, and sizes 
+
+## geom_density
+
+### Basic Plot
+```{r, fig.height =5, fig.width=10, warning = FALSE}
+
+g_none = ggplot(iris, aes(x = Petal.Length, color = Species)) +
+  geom_density() +  
+  labs(title = "Petal Length Distributions by Species",
+       x = "Petal Length",
+       y = "Density") +
+  theme_light() 
+
+g_none
+```
+
+### Improvement: Changing the size of the line and introducing different linetypes
+
+```{r, fig.height =5, fig.width=10, warning = FALSE}
+g_imp1 = ggplot(iris, aes(x = Petal.Length, color = Species, linetype = Species)) + # Different linetype by group
+  geom_density(size = 1.5) +   # Increase the size
+  labs(title = "Petal Length Distributions by Species",
+       x = "Petal Length",
+       y = "Density") +
+  theme_light() +
+  scale_linetype_manual(values = c("solid", "dashed", "dotted")) # Manually choose the linetypes
+
+g_imp1
+```
+
+### Improvement: Changing the size of the line and introducing annotations
+
+```{r, fig.height =5, fig.width=10, warning = FALSE}
+g_imp2 = ggplot(iris, aes(x = Petal.Length, color = Species)) +
+          geom_density(size = 1.5) +   # Increase the size
+          labs(title = "Petal Length Distributions by Species",
+               x = "Petal Length",
+               y = "Density") +
+          theme_light() +
+          theme(legend.position = "none") +
+          annotate("segment", x = 1.6, xend = 1.9, y = 2.3, yend = 2.5, colour = "black") + #Annotating
+          annotate("text", x=2.1, y=2.55, label="setosa",color="black", size=4) +
+          annotate("segment", x = 4.7, xend = 5, y = 0.8, yend = 1, colour = "black") +
+          annotate("text", x=5.25, y=1.05, label="versicolor",color="black", size=4) +
+          annotate("segment", x = 6, xend = 6.35, y = 0.5, yend = 0.7, colour = "black") +
+          annotate("text", x=6.55, y=0.75, label="virginica",color="black", size=4)
+
+g_imp2
+```
+
+```{r, fig.height =10, warning = FALSE}
+grid.arrange(g_none, g_imp1, g_imp2)
+```
+
+
+## geom_point
+
+### Improvement: Using different shapes
+
+```{r, fig.height =10, fig.width=10, warning = FALSE}
+g1 = ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Species)) +
+      geom_point(size = 2, aes(alpha = 0.8)) +
+      labs(title = "Sepal Length vs Sepal Width",
+           x = "Sepal Length",
+           y = "Sepal Width") +
+      theme_minimal() +
+      scale_alpha(guide = 'none')
+  
+g2 = ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, shape = Species, alpha = 0.9)) +
+      geom_point(size = 3) +
+      labs(title = "Sepal Length vs Sepal Width",
+           x = "Sepal Length",
+           y = "Sepal Width") +
+      theme_minimal() +
+      scale_shape_manual(values = c(16, 17, 8)) + # Different shapes (circle, triangle, square)
+      scale_alpha(guide = 'none')
+
+grid.arrange(g1, g2, nrow = 2)
+```
+
+
+## geom_bar
+
+### Improvement: Using different patterns without color
+
+```{r, warning = FALSE}
+library(ggplot2)
+library(ggpattern)
+
+ggplot(mpg, aes(x = class, pattern = as.factor(year))) + 
+  geom_bar_pattern(position = "dodge",                  # Group bars side by side
+                   aes(pattern_fill = as.factor(year)), # Fill pattern based on the year
+                   stat = "count",                      # Count cars in each group
+                   width = 0.7,                         # Adjust bar width
+                   pattern_density = 0.1,               # Density of the pattern
+                   pattern_angle = 45,                  # Angle of the pattern
+                   fill = "white",                      # Set the background color of the bars to white
+                   colour = "black") +                  # Color and define the outline of the bars
+  scale_pattern_manual(values = c("crosshatch", "circle", "stripe", "diamond")) +  # Different patterns for each year 
+  labs(title = "Grouped Bar Plot with Different Pattern Types by Year",
+       x = "Car Class",
+       y = "Count of Cars") +
+  theme_minimal() 
+```
+
+### Improvement: Using different patterns with color
+
+```{r, warning = FALSE}
+ggplot(mpg, aes(x = class, fill = as.factor(year), pattern = as.factor(year))) + 
+  geom_bar_pattern(position = "dodge",                  # Group bars side by side
+                   aes(pattern_fill = as.factor(year)), # Fill pattern based on the year
+                   stat = "count",                      # Count cars in each group
+                   width = 0.7,                         # Adjust bar width
+                   pattern_density = 0.1,               # Density of the pattern
+                   pattern_angle = 45,                  # Angle of the pattern                      
+                   colour = "black") +                  # Color and define the outline of the bars
+  scale_pattern_manual(values = c("crosshatch", "circle", "stripe", "diamond")) +  # Different patterns for each year 
+  labs(title = "Grouped Bar Plot with Different Pattern Types by Year",
+       x = "Car Class",
+       y = "Count of Cars") +
+  scale_fill_manual(values = c("pink", "lightblue", "grey", "white")) +  # Custom colors
+  theme_minimal()  
+
+```
+
+
+# Using Color
+
+## Colors to Avoid
+
+* Red and Green
+* Yellow and Violet
+* Blue and Green
+
+## Choosing colors and Checking how they would be perceived by CB individuals
+
+```{r echo = T, results = 'hide', warning = FALSE}
+g3 = ggplot(iris, aes(y = Species, x = Petal.Length, fill = Species)) +
+  geom_boxplot() +
+  labs(title = "Petal Length Distribution by Species",
+       y = "Species",
+       x = "Petal Length") +
+  theme_minimal()
+```
+
+### RColorBrewer and colorblindcheck
+
+```{r, fig.height = 10, warning = FALSE}
+library(RColorBrewer) 
+library(colorblindcheck)
+
+## All the palettes in RColorBrewer
+display.brewer.all()
+
+## Palettes that are color friendly in RColorBrewer
+display.brewer.all(colorblindFriendly = TRUE)
+
+## Let's check what a color would look like to different color blind people using the colorblindcheck package
+Spectral = brewer.pal(n = 11, name = 'Spectral')
+#display.brewer.pal(n = 9, name = 'Spectral')
+palette_check(Spectral, plot = TRUE) #vector of hexadecimal color descriptions
+```
+
+### Make your own colors (Hexadecimal RGB color specification) and colorblindcheck
+
+You can make a color by defining the intensity of the red, green and blue channels in #rrggbb.
+Each is a combination of two hexadecimals (0 1 2 3 4 5 6 7 8 9 A B C D E F). The lowest intensity is 00 and the highest FF.
+
+```{r, warning = FALSE}
+## You can make your own palette and check
+palette = c("#FFBF00","#F46D43","#ABDDA4","#D53E4F", "#66C2A5","#FF0000","#80FF00","#00FFFF")
+palette_1 = c("#FFBF00","#80FF00","#F46D43","#FF0000","#ABDDA4","#D53E4F","#66C2A5","#00FFFF")
+palette_check(palette, plot = TRUE)
+```
+
+### Include the colors in your plot 
+
+```{r, warning = FALSE}
+## Palettes that are color friendly in RColorBrewer
+#display.brewer.all(colorblindFriendly = TRUE)
+
+# add a palette to a plot
+g3 + scale_fill_manual(values = palette) # manual(values = ..) for palettes constructed manually
+g3 + scale_fill_brewer(palette = "RdBu") # brewer(palette = "..") for palettes in RColorBrewer
+g3 + scale_fill_brewer(palette = "Dark2")
+```
+
+### Check how the plots would be perceived by CB individuals
+
+* Non-Friendly color
+
+```{r, warning = FALSE}
+#How can we visualize our plots from the perspective of a color blind person 
+
+library(dichromat)
+
+g3 + scale_fill_manual(values = palette_1)
+
+g3 + scale_fill_manual(values = dichromat(palette_1, type = "protan"))
+
+g3 + scale_fill_manual(values = dichromat(palette_1, type = "deutan"))
+
+g3 + scale_fill_manual(values = dichromat(palette_1, type = "tritan"))
+
+```
+
+* Friendly Color
+
+```{r, warning = FALSE}
+g3 + scale_fill_brewer(palette = "Dark2" )
+
+g3 + scale_fill_manual(values = dichromat(RColorBrewer::brewer.pal(n=11, name = "Dark2"), type = "protan"))
+
+g3 + scale_fill_manual(values = dichromat(RColorBrewer::brewer.pal(n=11, name = "Dark2"), type = "deutan"))
+
+g3 + scale_fill_manual(values = dichromat(RColorBrewer::brewer.pal(n=11, name = "Dark2"), type = "tritan"))
+```
+
+## Other Palettes: dichromat, colorBlindness, viridis (Color Safe)
+
+
+```{r, warning = FALSE}
+library(paletteer)
+library(colorBlindness)
+
+paletteer_d("dichromat::BrowntoBlue_10")
+paletteer_d("colorBlindness::paletteMartin")
+paletteer_c("viridis::viridis", 30)
+
+plot(paletteer_d("dichromat::BrowntoBlue_10"))
+plot(paletteer_d("colorBlindness::paletteMartin"))
+plot(paletteer_c("viridis::viridis", 30))
+
+#colorBlindness::availablePalette()
+#dichromat::colorschemes
+```
+
+* dichromat package: https://cran.r-project.org/web/packages/dichromat/dichromat.pdf
+* colorBlindness package: https://cran.r-project.org/web/packages/colorBlindness/colorBlindness.pdf
+* all color palettes documentation: https://r-charts.com/color-palettes/#discrete
+
+
+
+
+
+
